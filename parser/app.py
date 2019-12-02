@@ -22,6 +22,7 @@
 
 from main.sql_parser.snowsqlparser import ParseSql
 from main.sql_parser.file_finder import FileFinder
+from main.write_file.csv_output import CsvOutput
 from main.executers import SequentialExecuter, MultiProcessingExecuter
 import uuid
 import time
@@ -49,19 +50,21 @@ class Runner(object):
     def findFiles(self) -> None:    
         self.allfiles = FileFinder().getListOfFiles()
 
-    def _write_csv(self):
-        import tempfile, csv
-        csv_names=[]
-        for sqlobject in self.dependencies:
-            for table in sqlobject['tables']:
-                csventry = str([sqlobject['name'] ,
-                           sqlobject['filename'],
-                           table,
-                           str(uuid.uuid1())])
-                with tempfile.NamedTemporaryFile() as temp_csv:
-                    temp_csv.write(csventry)
-                csv_names.append(temp_csv.name)
+    def findOutputFile(self) -> None:
+        self.outputfile = CsvOutput().get_output_csv_file()
 
+    def _write_csv(self):
+        import csv
+        self.findOutputFile()
+        with open(self.outputfile, 'w') as f:
+            for sqlobject in self.dependencies:
+                for table in sqlobject['tables']:
+                    tab_deps = str([sqlobject['name'] ,
+                               sqlobject['filename'],
+                               table,
+                               str(uuid.uuid1())])
+                    f.writelines(tab_deps)
+                    f.write('\n')
 
     def start(self) -> None:
         self.parseSql()

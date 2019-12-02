@@ -24,8 +24,6 @@ import os
 import re
 from .sqlExpressions import reservedSqlExpressions, specialCharacters, endstatement, duallist, technicalParameter
 from util.logger_service import LoggerMixin
-import exampleSql
-import textwrap
 
 class ParseSql(LoggerMixin):
     def __init__(self, file):

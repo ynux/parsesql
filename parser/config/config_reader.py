@@ -33,8 +33,8 @@ class Configuration(LoggerMixin):
         self.configfilepath = os.path.join(self.abspath, self.filename)
         self.data = self.read()
         self.sqldir = self.get_sql_directory()
+        self.outputfile = self.get_output_file()
         self.file_extension = self.data['file_extension']
-        self.snowflake_account = self.data['Snowflake_Account']
 
     def read(self):
         try:
@@ -47,6 +47,21 @@ class Configuration(LoggerMixin):
         """
         Use Pathlib as it is transforming the path correctly to the given os
         """
-        return Path(self.data['sqldirectory'])
+        if self.data['sqldirectory'] == "":
+            base = os.path.dirname(os.path.abspath(__file__))
+            base_parent = os.path.dirname(base)
+            sd = os.path.join(base_parent, 'exampleSql')
+        else:
+            sd = self.data['sqldirectory']
+        return Path(sd)
+
+    def get_output_file(self):
+        if self.data['output_file'] == "":
+            base = os.path.dirname(os.path.abspath(__file__))
+            base_parent = os.path.dirname(base)
+            of = os.path.join(base_parent, 'prod_viewdependencies.csv')
+        else:
+            of = self.data['output_file']
+        return of
 
 Config = Configuration(filename='configuration.json')
