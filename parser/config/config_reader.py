@@ -22,7 +22,7 @@
 
 import json
 import os
-from pathlib import Path, WindowsPath
+from pathlib import Path
 from util.logger_service import LoggerMixin
 
 
@@ -48,20 +48,18 @@ class Configuration(LoggerMixin):
         Use Pathlib as it is transforming the path correctly to the given os
         """
         if self.data['sqldirectory'] == "":
-            base = os.path.dirname(os.path.abspath(__file__))
-            base_parent = os.path.dirname(base)
-            sd = os.path.join(base_parent, 'exampleSql')
+            path_parent = os.path.dirname(self.abspath)
+            sd = os.path.join(path_parent, 'exampleSql')
         else:
             sd = self.data['sqldirectory']
         return Path(sd)
 
     def get_output_file(self):
         if self.data['output_file'] == "":
-            base = os.path.dirname(os.path.abspath(__file__))
-            base_parent = os.path.dirname(base)
+            base_parent = os.path.dirname(self.abspath)
             of = os.path.join(base_parent, 'prod_viewdependencies.csv')
         else:
             of = self.data['output_file']
-        return of
+        return Path(of)
 
 Config = Configuration(filename='configuration.json')
