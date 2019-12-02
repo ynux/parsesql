@@ -23,6 +23,7 @@
 from main.sql_parser.snowsqlparser import ParseSql
 from main.sql_parser.file_finder import FileFinder
 from main.write_file.csv_output import CsvOutput
+from main.write_file.csv_prettified import PrettyOutput
 from main.executers import SequentialExecuter, MultiProcessingExecuter
 import uuid
 import time
@@ -54,7 +55,6 @@ class Runner(object):
         self.outputfile = CsvOutput().get_output_csv_file()
 
     def _write_csv(self):
-        import csv
         self.findOutputFile()
         with open(self.outputfile, 'w') as f:
             for sqlobject in self.dependencies:
@@ -66,9 +66,13 @@ class Runner(object):
                     f.writelines(tab_deps)
                     f.write('\n')
 
+    def _write_pretty_csv(self):
+        PrettyOutput().writing_pretty()
+
     def start(self) -> None:
         self.parseSql()
         self._write_csv()
+        self._write_pretty_csv()
 
 if __name__ == "__main__":
     starttime = time.time()
